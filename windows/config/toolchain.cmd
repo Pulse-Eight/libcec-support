@@ -4,7 +4,7 @@ SET TOOLCHAIN64=""
 SET TOOLCHAINARM=""
 
 IF "%VSVERSION%" == "15" (
-  "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat"
+  
   SET TOOLCHAIN32="%VS150COMNTOOLS%..\..\VC\bin\vcvars32.bat"
   SET TOOLCHAIN64="%VS150COMNTOOLS%..\..\VC\bin\amd64\vcvars64.bat"
   SET TOOLCHAINARM="%VS150COMNTOOLS%..\..\VC\bin\x86_arm\vcvarsx86_arm.bat"
