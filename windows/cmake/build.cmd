@@ -7,35 +7,36 @@ rem Usage: build.cmd [arch] [build directory] [visual studio version]
 
 rem set paths
 SET BASEDIR=%CD%\..\..
-SET BUILDDIR=%2
+SET BUILDARCH=%1
+SET BUILDDIR=%~2
 SET MYDIR=%~dp0
 
-call %MYDIR%\..\config\toolchain.cmd
+call "%MYDIR%\..\config\toolchain.cmd"
 
 IF %TOOLCHAIN32% == "" (
-  echo Toolchain not set
+  echo Toolchain not set: %VSVERSION%
   GOTO END
 )
 
-rem set Visual C++ build environment
-IF "%1" == "amd64" (
-  echo Compiling for win64 using %TOOLCHAIN_NAME%
+IF "%BUILDARCH%" == "x64" (
+  echo Generating for win64 "%TOOLCHAIN_NAME%"
   call %TOOLCHAIN64%
   SET INSTALLDIR=..\..\build\x64
 ) ELSE (
-  IF "%1" == "arm" (
-    echo Compiling for ARM using %TOOLCHAIN_NAME%
+  IF "%BUILDARCH%" == "arm" (
+    echo Generating for ARM "%TOOLCHAIN_NAME%"
     call %TOOLCHAINARM%
     SET INSTALLDIR=..\..\build\arm
   ) ELSE (
-    echo Compiling for win32 using %TOOLCHAIN_NAME%
+    echo Generating for win32 "%TOOLCHAIN_NAME%"
     call %TOOLCHAIN32%
-    SET INSTALLDIR=..\..\build
+    SET INSTALLDIR=..\..\build\win32
   )
 )
 
 rem go into the build directory
-CD "%BUILDDIR%"
+CD %BUILDDIR%
+
 nmake install
 
 :END
