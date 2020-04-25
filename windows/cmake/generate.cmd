@@ -8,84 +8,102 @@ rem Usage: generate.cmd [arch] [generator] [project dir] [build dir] [install di
 rem set paths
 SET MYDIR=%~dp0
 SET BASEDIR=%MYDIR%..\..
+rem parameter: architecture
 SET BUILDARCH=%1
+rem parameter: project type
 SET PROJECT_TYPE=%2
+rem parameter: project directory
 SET PROJECT_DIR=%3
+rem parameter: build directory
 SET BUILDDIR=%4
+rem parameter: installation directory
 SET INSTALLDIR=%5
+rem parameter: build type
 SET BUILDTYPE=%6
+rem parameter: visual studio version
 SET VSVERSION=%7
+rem optional parameter: static library build
 SET BUILDSTATIC=%8
 
-echo --------------------------------------
-echo Generating cmake project:
-echo Architecture = %BUILDARCH%
-echo Project type = %PROJECT_TYPE%
-echo Project = %PROJECT_DIR%
-echo Target = %BUILDDIR%
-echo Install = %INSTALLDIR%
-echo Build type = %BUILDTYPE%
-echo Visual Studio version = %VSVERSION%
-echo --------------------------------------
+IF [%7] == [] GOTO missingparams
 
-call %MYDIR%..\config\toolchain.cmd
+SET PROJECT_DIR=%PROJECT_DIR:"=%
+SET BUILDDIR=%BUILDDIR:"=%
+SET INSTALLDIR=%INSTALLDIR:"=%
 
-IF %TOOLCHAIN32% == "" (
-  echo Toolchain not set: %VSVERSION%
-  pause
-  GOTO END
+rem Configure the toolchain
+CALL "%MYDIR%..\config\toolchain.cmd" >nul
+IF "%TOOLCHAIN_NAME%" == "" (
+  ECHO. Toolchain not configured
+  EXIT /b 1
 )
 
-rem set Visual C++ build environment
-IF "%BUILDARCH%" == "amd64" (
-  echo Generating for win64 using %TOOLCHAIN_NAME%
-  call %TOOLCHAIN64%
-  SET CMWAKE_WIN64=^-DWIN64^=1
-) ELSE (
-  IF "%BUILDARCH%" == "arm" (
-    echo Generating for ARM using %TOOLCHAIN_NAME%
-    call %TOOLCHAINARM%
-    SET CMWAKE_WIN64=^-DCMAKE_SYSTEM_NAME^=WindowsStore ^-DCMAKE_SYSTEM_VERSION^=10.0 
-  ) ELSE (
-    echo Generating for win32 using %TOOLCHAIN_NAME%
-    call %TOOLCHAIN32%
-    SET CMWAKE_WIN64=^-DWIN32^=1
-  )
-)
-
+rem Set the project type to generate
 SET GEN_PROJECT_TYPE="NMake Makefiles"
+SET CMAKE_A_OPT=
+
 IF "%PROJECT_TYPE%" == "vs" (
   SET GEN_PROJECT_TYPE="%TOOLCHAIN_NAME%"
   IF "%BUILDARCH%" == "amd64" (
-    SET GEN_PROJECT_TYPE="%TOOLCHAIN_NAME% Win64"
+    IF "%TOOLCHAIN_CMAKE_A_OPT%" == "" (
+      SET GEN_PROJECT_TYPE="%TOOLCHAIN_NAME% Win64"
+    ) ELSE (
+      SET CMAKE_A_OPT=-A x64
+    )
   ) ELSE (
     IF "%BUILDARCH%" == "arm" (
-      SET GEN_PROJECT_TYPE="%TOOLCHAIN_NAME% ARM"
+      IF "%TOOLCHAIN_CMAKE_A_OPT%" == "" (
+        SET GEN_PROJECT_TYPE="%TOOLCHAIN_NAME% ARM"
+      ) ELSE (
+        SET CMAKE_A_OPT=-A ARM
+      )
+    ) ELSE (
+      IF "%TOOLCHAIN_CMAKE_A_OPT%" == "" (
+        SET CMAKE_A_OPT=
+      ) ELSE (
+        SET CMAKE_A_OPT=-A Win32
+      )
     )
   )
 )
 
+rem Shared or static
 SET GEN_SHARED_LIBS=^-DBUILD_SHARED_LIBS^=1
-if "%BUILDSTATIC%" == "static" (
+IF "%BUILDSTATIC%" == "static" (
   SET GEN_SHARED_LIBS=^-DBUILD_SHARED_LIBS^=0
 )
 
-rem create the build directories
+rem Create the build directories
 IF NOT EXIST "%INSTALLDIR%" MKDIR "%INSTALLDIR%"
 IF NOT EXIST "%BUILDDIR%" MKDIR "%BUILDDIR%"
 
-echo Generating project files for %GEN_PROJECT_TYPE% from %PROJECT_DIR% in %BUILDDIR%, installing to %INSTALLDIR%
+rem Execute cmake to generate makefiles processable by nmake
+ECHO. --------------------------------------
+ECHO. Generating cmake project:
+ECHO. Architecture = %BUILDARCH%
+ECHO. Project type = %GEN_PROJECT_TYPE%
+ECHO. Cmake ARCH   = %CMAKE_A_OPT%
+ECHO. Project      = "%PROJECT_DIR%"
+ECHO. Target       = "%BUILDDIR%"
+ECHO. Install      = "%INSTALLDIR%"
+ECHO. Build type   = %BUILDTYPE%
+ECHO. Toolchain    = %TOOLCHAIN_NAME%
+ECHO. --------------------------------------
+ECHO.
 
-rem go into the build directory
+rem Cmake fails when there are quotes in the project directory path
 CD "%BUILDDIR%"
-
-rem execute cmake to generate makefiles processable by nmake
-cmake %PROJECT_DIR% -G %GEN_PROJECT_TYPE% ^
+%CMAKE% ^
+      -G %GEN_PROJECT_TYPE% %CMAKE_A_OPT% ^
       -DCMAKE_BUILD_TYPE=%BUILDTYPE% ^
       -DCMAKE_USER_MAKE_RULES_OVERRIDE="%MYDIR%c-flag-overrides.cmake" ^
       -DCMAKE_USER_MAKE_RULES_OVERRIDE_CXX="%MYDIR%cxx-flag-overrides.cmake" ^
       -DCMAKE_INSTALL_PREFIX="%INSTALLDIR%" ^
       %GEN_SHARED_LIBS% ^
-      %CMWAKE_WIN64%
+      %CMWAKE_WIN64% ^
+      %PROJECT_DIR%
+EXIT /b %errorlevel%
 
-:END
+:missingparams
+ECHO.%~dp0 requires 7 parameters
+exit /b 99

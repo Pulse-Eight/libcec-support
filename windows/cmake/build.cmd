@@ -3,39 +3,27 @@
 SETLOCAL
 
 rem Build a cmake generated project with nmake
-rem Usage: build.cmd [arch] [build directory] [visual studio version]
+rem Usage: build.cmd [arch] [build directory]
 
-rem set paths
-SET BASEDIR=%CD%\..\..
+rem parameter: architecture
+SET BUILDARCH=%1
+rem parameter: build directory
 SET BUILDDIR=%2
 SET MYDIR=%~dp0
 
-call %MYDIR%\..\config\toolchain.cmd
+SET BUILDDIR=%BUILDDIR:"=%
 
-IF %TOOLCHAIN32% == "" (
-  echo Toolchain not set
-  GOTO END
+rem Configure the toolchain
+CALL "%MYDIR%..\config\toolchain.cmd" >nul
+IF "%TOOLCHAIN_NAME%" == "" (
+  ECHO.*** Visual Studio toolchain could not be configured for %BUILDARCH% ***
+  ECHO.
+  ECHO.See docs\README.windows.md
+  EXIT /b 2
 )
 
-rem set Visual C++ build environment
-IF "%1" == "amd64" (
-  echo Compiling for win64 using %TOOLCHAIN_NAME%
-  call %TOOLCHAIN64%
-  SET INSTALLDIR=..\..\build\x64
-) ELSE (
-  IF "%1" == "arm" (
-    echo Compiling for ARM using %TOOLCHAIN_NAME%
-    call %TOOLCHAINARM%
-    SET INSTALLDIR=..\..\build\arm
-  ) ELSE (
-    echo Compiling for win32 using %TOOLCHAIN_NAME%
-    call %TOOLCHAIN32%
-    SET INSTALLDIR=..\..\build
-  )
-)
-
-rem go into the build directory
+rem Compile
 CD "%BUILDDIR%"
+ECHO. Compiling "%BUILDDIR%" for %BUILDARCH% using %TOOLCHAIN_NAME%
 nmake install
-
-:END
+EXIT /b %errorlevel%
