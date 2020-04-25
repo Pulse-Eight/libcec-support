@@ -12,7 +12,7 @@ SET CMWAKE_WIN64=
 SET CMAKE="C:\Program Files\CMake\bin\cmake.exe"
 
 IF "%VSVERSION%" == "" (
-  SET VSVERSION=2017
+  SET VSVERSION=2019
 )
 
 IF "%BUILDARCH%" == "" (
