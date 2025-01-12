@@ -50,14 +50,17 @@ IF "%VSVERSION%" == "2019" (
     SET TOOLCHAIN32="%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
     SET TOOLCHAIN64="%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
     SET TOOLCHAINARM="%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
+    SET TOOLCHAINARM64="%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
   ) ELSE (
     SET TOOLCHAIN32="%VS160COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat"
     SET TOOLCHAIN64="%VS160COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat"
     SET TOOLCHAINARM="%VS160COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat"
+    SET TOOLCHAINARM64="%VS160COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat"
   )
   SET TOOLCHAIN32CFG=x86
   SET TOOLCHAIN64CFG=amd64
   SET TOOLCHAINARMCFG=amd64_arm
+  SET TOOLCHAINARM64CFG=amd64_arm64
   SET TOOLCHAIN_NAME=Visual Studio 16 2019
   SET TOOLCHAIN_CMAKE_A_OPT=-A
 )
@@ -70,8 +73,8 @@ IF "%BUILDARCH%" == "amd64" (
   IF %errorlevel% neq 0 EXIT /b %errorlevel%
 ) ELSE (
   IF "%BUILDARCH%" == "arm64" (
-    SET CMWAKE_WIN64=^-D_M_ARM64 ^-DCMAKE_SYSTEM_VERSION^=10.0
-    CALL %TOOLCHAINARM% %TOOLCHAINARMCFG%
+    SET CMWAKE_WIN64=^-D_M_ARM64=1 ^-DCMAKE_SYSTEM_VERSION^=10.0
+    CALL %TOOLCHAINARM64% %TOOLCHAINARM64CFG%
     IF %errorlevel% neq 0 EXIT /b %errorlevel%
   ) ELSE (  
     IF "%BUILDARCH%" == "arm" (
