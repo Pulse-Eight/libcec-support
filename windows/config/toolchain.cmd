@@ -69,15 +69,21 @@ IF "%BUILDARCH%" == "amd64" (
   CALL %TOOLCHAIN64% %TOOLCHAIN64CFG%
   IF %errorlevel% neq 0 EXIT /b %errorlevel%
 ) ELSE (
-  IF "%BUILDARCH%" == "arm" (
-    SET CMWAKE_WIN64=^-DCMAKE_SYSTEM_NAME^=WindowsStore ^-DCMAKE_SYSTEM_VERSION^=10.0
+  IF "%BUILDARCH%" == "arm64" (
+    SET CMWAKE_WIN64=^-D_M_ARM64 ^-DCMAKE_SYSTEM_VERSION^=10.0
     CALL %TOOLCHAINARM% %TOOLCHAINARMCFG%
     IF %errorlevel% neq 0 EXIT /b %errorlevel%
-  ) ELSE (
-    SET CMWAKE_WIN64=^-DWIN32^=1
-    CALL %TOOLCHAIN32% %TOOLCHAIN32CFG%
-    IF %errorlevel% neq 0 EXIT /b %errorlevel%
-  )
+  ) ELSE (  
+    IF "%BUILDARCH%" == "arm" (
+      SET CMWAKE_WIN64=^-DCMAKE_SYSTEM_NAME^=WindowsStore ^-DCMAKE_SYSTEM_VERSION^=10.0
+      CALL %TOOLCHAINARM% %TOOLCHAINARMCFG%
+      IF %errorlevel% neq 0 EXIT /b %errorlevel%
+    ) ELSE (
+      SET CMWAKE_WIN64=^-DWIN32^=1
+      CALL %TOOLCHAIN32% %TOOLCHAIN32CFG%
+      IF %errorlevel% neq 0 EXIT /b %errorlevel%
+    )
+  )  
 )
 
 rem ===========================================================================

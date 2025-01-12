@@ -58,11 +58,19 @@ IF "%PROJECT_TYPE%" == "vs" (
         SET CMAKE_A_OPT=-A ARM
       )
     ) ELSE (
-      IF "%TOOLCHAIN_CMAKE_A_OPT%" == "" (
-        SET CMAKE_A_OPT=
+      IF "%BUILDARCH%" == "arm64" (
+         IF "%TOOLCHAIN_CMAKE_A_OPT%" == "" (
+           SET GEN_PROJECT_TYPE="%TOOLCHAIN_NAME% ARM64"
+         ) ELSE (
+           SET CMAKE_A_OPT=-A ARM64
+         )  
       ) ELSE (
-        SET CMAKE_A_OPT=-A Win32
-      )
+        IF "%TOOLCHAIN_CMAKE_A_OPT%" == "" (
+          SET CMAKE_A_OPT=
+        ) ELSE (
+          SET CMAKE_A_OPT=-A Win32
+        )
+      )   
     )
   )
 )
