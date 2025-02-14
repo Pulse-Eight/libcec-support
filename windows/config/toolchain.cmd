@@ -65,14 +65,16 @@ IF "%VSVERSION%" == "2019" (
   SET TOOLCHAIN_CMAKE_A_OPT=-A
 )
 IF "%VSVERSION%" == "2022" (
-  IF "%VS160COMNTOOLS%" == "" (
+  IF "%VS170COMNTOOLS%" == "" (
     SET TOOLCHAIN32="%ProgramFiles(x86)%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat"
     SET TOOLCHAIN64="%ProgramFiles(x86)%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat"
     SET TOOLCHAINARM="%ProgramFiles(x86)%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat"
+    SET TOOLCHAINARM64="%ProgramFiles(x86)%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat"
   ) ELSE (
-    SET TOOLCHAIN32="%VS160COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat"
-    SET TOOLCHAIN64="%VS160COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat"
-    SET TOOLCHAINARM="%VS160COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat"
+    SET TOOLCHAIN32="%VS170COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat"
+    SET TOOLCHAIN64="%VS170COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat"
+    SET TOOLCHAINARM="%VS170COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat"
+    SET TOOLCHAINARM64="%VS170COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat"
   )
   SET TOOLCHAIN32CFG=x86
   SET TOOLCHAIN64CFG=amd64
