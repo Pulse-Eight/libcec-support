@@ -66,10 +66,10 @@ IF "%VSVERSION%" == "2019" (
 )
 IF "%VSVERSION%" == "2022" (
   IF "%VS170COMNTOOLS%" == "" (
-    SET TOOLCHAIN32="%ProgramFiles(x86)%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat"
-    SET TOOLCHAIN64="%ProgramFiles(x86)%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat"
-    SET TOOLCHAINARM="%ProgramFiles(x86)%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat"
-    SET TOOLCHAINARM64="%ProgramFiles(x86)%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat"
+    SET TOOLCHAIN32="%ProgramFiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat"
+    SET TOOLCHAIN64="%ProgramFiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat"
+    SET TOOLCHAINARM="%ProgramFiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat"
+    SET TOOLCHAINARM64="%ProgramFiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat"
   ) ELSE (
     SET TOOLCHAIN32="%VS170COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat"
     SET TOOLCHAIN64="%VS170COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat"
