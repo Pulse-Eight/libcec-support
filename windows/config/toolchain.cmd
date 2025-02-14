@@ -64,7 +64,23 @@ IF "%VSVERSION%" == "2019" (
   SET TOOLCHAIN_NAME=Visual Studio 16 2019
   SET TOOLCHAIN_CMAKE_A_OPT=-A
 )
-
+IF "%VSVERSION%" == "2022" (
+  IF "%VS160COMNTOOLS%" == "" (
+    SET TOOLCHAIN32="%ProgramFiles(x86)%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat"
+    SET TOOLCHAIN64="%ProgramFiles(x86)%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat"
+    SET TOOLCHAINARM="%ProgramFiles(x86)%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat"
+  ) ELSE (
+    SET TOOLCHAIN32="%VS160COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat"
+    SET TOOLCHAIN64="%VS160COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat"
+    SET TOOLCHAINARM="%VS160COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat"
+  )
+  SET TOOLCHAIN32CFG=x86
+  SET TOOLCHAIN64CFG=amd64
+  SET TOOLCHAINARMCFG=amd64_arm
+  SET TOOLCHAINARM64CFG=amd64_arm64
+  SET TOOLCHAIN_NAME=Visual Studio 17 2022
+  SET TOOLCHAIN_CMAKE_A_OPT=-A
+)
 rem ===========================================================================
 
 IF "%BUILDARCH%" == "amd64" (
