@@ -44,7 +44,7 @@ SET CMAKE_A_OPT=
 
 IF "%PROJECT_TYPE%" == "vs" (
   SET GEN_PROJECT_TYPE="%TOOLCHAIN_NAME%"
-  IF "%BUILDARCH%" == "amd64" (
+  IF "%BUILDARCH%" == "x64" (
     IF "%TOOLCHAIN_CMAKE_A_OPT%" == "" (
       SET GEN_PROJECT_TYPE="%TOOLCHAIN_NAME% Win64"
     ) ELSE (
@@ -73,6 +73,12 @@ IF "%PROJECT_TYPE%" == "vs" (
       )   
     )
   )
+)
+
+rem Skip Python wrapper when building debug on Windows
+SET SKIP_PYTHON=^-DSKIP_PYTHON_WRAPPER^=0
+IF "%BUILDTYPE%" == "Debug" (
+  SET SKIP_PYTHON=^-DSKIP_PYTHON_WRAPPER^=1
 )
 
 rem Shared or static
@@ -107,6 +113,7 @@ CD "%BUILDDIR%"
       -DCMAKE_USER_MAKE_RULES_OVERRIDE="%MYDIR%c-flag-overrides.cmake" ^
       -DCMAKE_USER_MAKE_RULES_OVERRIDE_CXX="%MYDIR%cxx-flag-overrides.cmake" ^
       -DCMAKE_INSTALL_PREFIX="%INSTALLDIR%" ^
+      %SKIP_PYTHON% ^
       %GEN_SHARED_LIBS% ^
       %CMWAKE_WIN64% ^
       %PROJECT_DIR%

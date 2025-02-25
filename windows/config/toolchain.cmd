@@ -16,7 +16,7 @@ IF "%VSVERSION%" == "" (
 )
 
 IF "%BUILDARCH%" == "" (
-  SET BUILDARCH="amd64"
+  SET BUILDARCH="x64"
 )
 
 IF "%VSVERSION%" == "2013" (
@@ -85,7 +85,7 @@ IF "%VSVERSION%" == "2022" (
 )
 rem ===========================================================================
 
-IF "%BUILDARCH%" == "amd64" (
+IF "%BUILDARCH%" == "x64" (
   SET CMWAKE_WIN64=^-DWIN64^=1
   CALL %TOOLCHAIN64% %TOOLCHAIN64CFG%
   IF %errorlevel% neq 0 EXIT /b %errorlevel%
